@@ -336,7 +336,7 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
   <div class="upload-area" id="upload-area">
     <input type="file" id="inp-imagem" accept="image/*" onchange="processarImagem(this)">
     <div class="upload-icon">📷</div>
-    <div class="upload-txt">Toque para anexar foto do orçamento<br><strong>JPG, PNG — comprimido automaticamente</strong></div>
+    <div class="upload-txt">Toque para anexar foto do orçamento<br><strong>JPG, PNG — ou cole com Ctrl+V</strong></div>
   </div>
 
   <div class="form-group">
@@ -421,6 +421,56 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 </div>
 
 <script>
+// ── MIGRAÇÃO AUTOMÁTICA DE VERSÕES ANTIGAS ────────────────────────────────────
+function migrarDados() {
+  const chaveAtual = 'encomendas_v4';
+  // Se já tem dados na chave atual, não faz nada
+  if (localStorage.getItem(chaveAtual)) return;
+
+  // Tenta puxar de versões anteriores em ordem decrescente
+  const versoes = ['encomendas_v3', 'encomendas_v2', 'encomendas'];
+  for (const chave of versoes) {
+    const raw = localStorage.getItem(chave);
+    if (!raw) continue;
+    try {
+      const dados = JSON.parse(raw);
+      if (!Array.isArray(dados) || dados.length === 0) continue;
+
+      // Normalizar estrutura antiga (v2/v3 tinham itens flat, não array de itens)
+      const migrados = dados.map(enc => {
+        // Se já tem array de itens (v4), mantém
+        if (Array.isArray(enc.itens)) return { ...enc, imagem: enc.imagem || null };
+        // Versão antiga: um único item flat → converte para array
+        return {
+          id:      enc.id || Date.now().toString(),
+          cliente: enc.cliente || '',
+          tel:     enc.tel || '',
+          status:  enc.pago ? 'pago' : (enc.status || 'pendente'),
+          imagem:  null,
+          data:    enc.data || '',
+          dataISO: enc.dataISO || '',
+          hora:    enc.hora || '',
+          itens: [{
+            peca:       enc.peca || '',
+            codPeca:    enc.codPeca || '',
+            codForn:    enc.codForn || '',
+            fornecedor: enc.fornecedor || '',
+            preco:      enc.preco || 0,
+            tipo:       'encomenda',
+          }]
+        };
+      });
+
+      localStorage.setItem(chaveAtual, JSON.stringify(migrados));
+      console.log(`✅ Migrados ${migrados.length} registros de "${chave}" para "${chaveAtual}"`);
+      return;
+    } catch(e) {
+      console.warn(`Erro ao migrar "${chave}":`, e);
+    }
+  }
+}
+migrarDados();
+
 // ── DADOS ────────────────────────────────────────────────────────────────────
 let encomendas = JSON.parse(localStorage.getItem('encomendas_v4') || '[]');
 let filtroAtivo = 'todos';
@@ -432,11 +482,14 @@ let imagemDraft = null; // base64 da imagem comprimida
 function processarImagem(input) {
   const file = input.files[0];
   if (!file) return;
+  processarBlob(file);
+}
+
+function processarBlob(blob) {
   const reader = new FileReader();
   reader.onload = function(e) {
     const img = new Image();
     img.onload = function() {
-      // Comprimir via canvas — max 900px largura, qualidade 0.7
       const canvas = document.createElement('canvas');
       const MAX = 900;
       let w = img.width, h = img.height;
@@ -450,8 +503,25 @@ function processarImagem(input) {
     };
     img.src = e.target.result;
   };
-  reader.readAsDataURL(file);
+  reader.readAsDataURL(blob);
 }
+
+// Ctrl+V para colar imagem — funciona quando o drawer estiver aberto
+document.addEventListener('paste', function(e) {
+  const drawer = document.getElementById('drawer');
+  if (!drawer.classList.contains('open')) return;
+  const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const blob = item.getAsFile();
+      if (blob) {
+        processarBlob(blob);
+        toast('📋 Imagem colada!', 'verde');
+      }
+      break;
+    }
+  }
+});
 
 function removerImagem() {
   imagemDraft = null;
