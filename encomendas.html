@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Encomendas</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23F97316'/><text y='72' x='50' text-anchor='middle' font-size='62'>📦</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12,86 +13,79 @@
   --border: #333; --accent: #F97316; --accent-dim: rgba(249,115,22,0.15);
   --green: #22C55E; --green-dim: rgba(34,197,94,0.12);
   --red: #EF4444; --red-dim: rgba(239,68,68,0.12);
-  --yellow: #EAB308;
+  --yellow: #EAB308; --blue: #3B82F6; --blue-dim: rgba(59,130,246,0.12);
+  --purple: #A855F7; --purple-dim: rgba(168,85,247,0.12);
   --text: #E5E5E5; --text-muted: #888; --text-dim: #555;
   --radius: 10px; --radius-sm: 6px;
 }
 body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
-/* ── HEADER ── */
-header {
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  padding: 0 14px; height: 52px; display: flex; align-items: center;
-  justify-content: space-between; position: sticky; top: 0; z-index: 100;
-}
+/* HEADER */
+header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 14px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
 .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 15px; }
 .logo-icon { width: 28px; height: 28px; background: var(--accent); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-.header-stats { display: flex; gap: 12px; font-size: 11px; color: var(--text-muted); }
-.header-stats span strong { color: var(--text); font-weight: 600; margin-left: 3px; }
+.header-stats { display: flex; gap: 10px; font-size: 11px; color: var(--text-muted); }
+.header-stats span strong { color: var(--text); font-weight: 600; margin-left: 2px; }
 
-/* ── TOOLBAR ── */
-.toolbar {
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  padding: 8px 14px; display: flex; gap: 8px; align-items: center;
-  position: sticky; top: 52px; z-index: 99;
-}
-.btn-nova {
-  background: var(--accent); color: white; border: none; border-radius: var(--radius-sm);
-  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700;
-  padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 5px;
-  white-space: nowrap; flex-shrink: 0;
-}
+/* TOOLBAR */
+.toolbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 8px 14px; display: flex; gap: 8px; align-items: center; position: sticky; top: 52px; z-index: 99; }
+.btn-nova { background: var(--accent); color: white; border: none; border-radius: var(--radius-sm); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; padding: 8px 14px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
 .search-wrap { position: relative; flex: 1; }
-.search-wrap input {
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm);
-  color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px;
-  padding: 7px 10px 7px 30px; outline: none; width: 100%;
-}
+.search-wrap input { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; padding: 7px 10px 7px 30px; outline: none; width: 100%; }
 .search-wrap input:focus { border-color: var(--accent); }
 .search-icon { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 12px; }
-.btn-pdf-top {
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm);
-  color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
-  padding: 7px 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0;
-}
+.btn-pdf-top { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 7px 10px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
 .btn-pdf-top:hover { border-color: var(--accent); color: var(--accent); }
 
-/* ── FILTER BAR ── */
-.filterbar {
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  padding: 0 14px; display: flex; gap: 0;
-}
-.filter-btn {
-  background: none; border: none; border-bottom: 2px solid transparent;
-  color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600;
-  padding: 8px 14px; cursor: pointer; transition: all 0.15s;
-}
+/* FILTER BAR */
+.filterbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 14px; display: flex; gap: 0; overflow-x: auto; }
+.filter-btn { background: none; border: none; border-bottom: 2px solid transparent; color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 8px 12px; cursor: pointer; white-space: nowrap; }
 .filter-btn.ativo { color: var(--accent); border-bottom-color: var(--accent); }
 
-/* ── MAIN ── */
+/* MAIN */
 .main { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 16px; }
 
-/* ── DATA GROUP ── */
+/* DATA GROUP */
 .data-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .data-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); white-space: nowrap; }
 .data-line { flex: 1; height: 1px; background: var(--border); }
 .data-count { font-size: 10px; color: var(--text-dim); white-space: nowrap; }
 
-/* ── CLIENTE GROUP ── */
+/* CLIENTE GROUP */
 .cliente-group { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 8px; }
 .cliente-header { padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
 .cliente-info { display: flex; align-items: center; gap: 9px; min-width: 0; }
 .cliente-avatar { width: 28px; height: 28px; background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
-.cliente-nome { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cliente-nome { font-size: 13px; font-weight: 700; }
 .cliente-tel { font-size: 11px; color: var(--text-muted); }
 .btn-wpp { display: flex; align-items: center; gap: 4px; background: #128C7E22; border: 1px solid #128C7E55; border-radius: var(--radius-sm); color: #25D366; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; padding: 5px 8px; cursor: pointer; text-decoration: none; flex-shrink: 0; }
 .btn-wpp svg { width: 12px; height: 12px; }
 
-/* ── ENCOMENDA CARD ── */
-.encomenda-card { padding: 10px 12px; border-bottom: 1px solid var(--border); border-left: 3px solid transparent; display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; align-items: start; }
-.encomenda-card:last-child { border-bottom: none; }
-.encomenda-card.pago { border-left-color: var(--green); }
-.encomenda-card.pendente { border-left-color: var(--yellow); }
+/* ENCOMENDA (grupo de itens do cliente no dia) */
+.encomenda-wrap { border-bottom: 1px solid var(--border); }
+.encomenda-wrap:last-child { border-bottom: none; }
+
+/* STATUS BANNER */
+.status-banner { display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); gap: 8px; }
+.status-esquerda { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.status-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.status-label.pendente { color: var(--yellow); }
+.status-label.pago { color: var(--green); }
+.status-label.finalizada { color: var(--purple); }
+.status-hora { font-size: 10px; color: var(--text-dim); }
+.status-actions { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
+
+/* BADGES DE STATUS */
+.badge { font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 999px; border: none; font-family: 'Inter', sans-serif; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+.badge:hover { opacity: 0.85; transform: scale(1.04); }
+.badge.pendente { background: rgba(234,179,8,0.1); color: var(--yellow); border: 1px solid rgba(234,179,8,0.3); }
+.badge.pago     { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+.badge.finalizada { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(168,85,247,0.4); font-size: 10px; padding: 4px 10px; }
+.badge.inativo  { opacity: 0.3; cursor: default; transform: none !important; }
+
+/* ITEM (peça) */
+.item-card { padding: 10px 12px; display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; align-items: start; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.item-card:last-child { border-bottom: none; }
 .enc-num { font-size: 10px; font-weight: 700; color: var(--text-dim); padding-top: 2px; }
 .enc-peca { font-size: 13px; font-weight: 600; line-height: 1.3; }
 .enc-codigos { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 3px; }
@@ -100,44 +94,54 @@ header {
 .enc-fornecedor { font-size: 11px; color: var(--text-muted); background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; }
 .enc-preco { font-size: 13px; font-weight: 700; color: var(--accent); }
 .enc-hora { font-size: 10px; color: var(--text-dim); }
-.enc-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-.badge-status { font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.4px; cursor: pointer; border: none; font-family: 'Inter', sans-serif; white-space: nowrap; }
-.badge-status.pago { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
-.badge-status.pendente { background: rgba(234,179,8,0.1); color: var(--yellow); border: 1px solid rgba(234,179,8,0.3); }
-.enc-btns { display: flex; gap: 4px; }
+.tag-tipo { font-size: 10px; font-weight: 700; border-radius: 4px; padding: 1px 7px; }
+.tag-tipo.encomenda { background: rgba(59,130,246,0.1); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+.tag-tipo.estoque   { background: rgba(34,197,94,0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+.item-btns { display: flex; gap: 4px; }
 .btn-icon { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 12px; padding: 3px 5px; border-radius: 4px; transition: color 0.15s, background 0.15s; }
 .btn-icon:hover { color: var(--accent); background: var(--accent-dim); }
 .btn-icon.del:hover { color: var(--red); background: var(--red-dim); }
 
-/* ── EMPTY ── */
+/* TOTAL DA ENCOMENDA */
+.enc-total { padding: 6px 12px; text-align: right; font-size: 11px; color: var(--text-muted); border-top: 1px dashed var(--border); }
+.enc-total strong { color: var(--accent); font-size: 13px; }
+
+/* EMPTY */
 .empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--text-dim); text-align: center; padding: 60px 20px; }
 .empty-icon { font-size: 36px; opacity: 0.3; }
 
-/* ── DRAWER (formulário) ── */
+/* DRAWER */
 .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300; display: none; }
 .drawer-overlay.open { display: block; }
-.drawer {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 301;
-  background: var(--surface); border-top: 1px solid var(--border);
-  border-radius: 16px 16px 0 0;
-  padding: 0 16px 24px;
-  max-height: 92vh; overflow-y: auto;
-  transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
-}
+.drawer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 301; background: var(--surface); border-top: 1px solid var(--border); border-radius: 16px 16px 0 0; padding: 0 16px 28px; max-height: 94vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.32,0.72,0,1); }
 .drawer.open { transform: translateY(0); }
 .drawer-handle { width: 36px; height: 4px; background: var(--border); border-radius: 999px; margin: 10px auto 14px; }
-.drawer-title { font-size: 14px; font-weight: 800; margin-bottom: 16px; }
-.form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.drawer-title { font-size: 14px; font-weight: 800; margin-bottom: 14px; }
+
+/* FORM */
+.form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
 .form-group label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-.form-group input, .form-group select {
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm);
-  color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px;
-  padding: 10px 12px; outline: none; width: 100%;
-}
+.form-group input, .form-group select { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; padding: 10px 12px; outline: none; width: 100%; }
 .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
 .form-group input::placeholder { color: var(--text-dim); }
 .form-row { display: flex; gap: 10px; }
 .form-row .form-group { flex: 1; }
+
+/* LISTA DE ITENS NO DRAWER */
+.itens-lista { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.item-draft { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; display: flex; align-items: flex-start; gap: 8px; }
+.item-draft-body { flex: 1; }
+.item-draft-peca { font-size: 13px; font-weight: 600; }
+.item-draft-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.btn-rem-item { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 14px; padding: 2px; flex-shrink: 0; }
+.btn-rem-item:hover { color: var(--red); }
+
+.secao-titulo { font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin: 14px 0 8px; display: flex; align-items: center; gap: 8px; }
+.secao-titulo::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.btn-add-item { background: var(--card); border: 1px dashed var(--border); border-radius: var(--radius-sm); color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 10px; cursor: pointer; width: 100%; margin-bottom: 10px; transition: all 0.15s; }
+.btn-add-item:hover { border-color: var(--accent); color: var(--accent); }
+
 .toggle-pago { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; cursor: pointer; user-select: none; }
 .toggle-pago input { display: none; }
 .toggle-track { width: 36px; height: 20px; background: var(--border); border-radius: 999px; position: relative; transition: background 0.2s; flex-shrink: 0; }
@@ -145,23 +149,20 @@ header {
 .toggle-pago.ativo .toggle-track { background: var(--green); }
 .toggle-pago.ativo .toggle-track::after { transform: translateX(16px); }
 .toggle-label { font-size: 14px; font-weight: 500; }
-.btn-cadastrar {
-  background: var(--accent); color: white; border: none; border-radius: var(--radius-sm);
-  font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
-  padding: 13px; cursor: pointer; width: 100%; margin-top: 4px;
-  transition: opacity 0.15s, transform 0.1s;
-}
+
+.btn-cadastrar { background: var(--accent); color: white; border: none; border-radius: var(--radius-sm); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; padding: 13px; cursor: pointer; width: 100%; margin-top: 8px; transition: opacity 0.15s, transform 0.1s; }
 .btn-cadastrar:hover { opacity: 0.9; }
 .btn-cadastrar:active { transform: scale(0.98); }
 
-/* ── MODAL GENÉRICO ── */
+/* MODAL */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 400; padding: 16px; }
 .modal-overlay.open { display: flex; }
-.modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; max-height: 90vh; overflow-y: auto; }
 .modal-title { font-size: 14px; font-weight: 700; }
 .modal-btns { display: flex; gap: 8px; margin-top: 4px; }
 .btn-cancel { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; padding: 10px; cursor: pointer; }
 .btn-ok { flex: 1; background: var(--accent); border: none; border-radius: var(--radius-sm); color: white; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; padding: 10px; cursor: pointer; }
+
 .periodo-btns { display: flex; gap: 6px; flex-wrap: wrap; }
 .periodo-btn { flex: 1; min-width: 80px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; padding: 8px 4px; cursor: pointer; text-align: center; }
 .periodo-btn.ativo { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
@@ -169,43 +170,62 @@ header {
 .custom-dates .form-group { flex: 1; }
 .preview-info { font-size: 12px; color: var(--text-muted); background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; }
 
-/* ── TOAST ── */
+/* UPLOAD IMAGEM */
+.upload-area { border: 2px dashed var(--border); border-radius: var(--radius-sm); padding: 16px; text-align: center; cursor: pointer; transition: all 0.15s; position: relative; margin-bottom: 10px; }
+.upload-area:hover { border-color: var(--accent); background: var(--accent-dim); }
+.upload-area input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.upload-icon { font-size: 22px; margin-bottom: 4px; }
+.upload-txt { font-size: 12px; color: var(--text-muted); }
+.upload-txt strong { color: var(--accent); }
+.img-preview-wrap { position: relative; margin-bottom: 10px; }
+.img-preview { width: 100%; max-height: 180px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border); display: block; }
+.btn-rem-img { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); border: none; border-radius: 50%; color: white; font-size: 13px; width: 26px; height: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+/* BOTÃO VER ORÇAMENTO */
+.btn-orcamento { display: inline-flex; align-items: center; gap: 4px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); border-radius: var(--radius-sm); color: var(--blue); font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; padding: 3px 8px; cursor: pointer; margin-top: 4px; }
+.btn-orcamento:hover { background: rgba(59,130,246,0.2); }
+/* MODAL IMAGEM */
+.modal-img-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 500; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 12px; padding: 16px; }
+.modal-img-overlay.open { display: flex; }
+.modal-img-overlay img { max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: var(--radius-sm); }
+.btn-fechar-img { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; padding: 10px 24px; cursor: pointer; }
 .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 11px 16px; font-size: 13px; font-weight: 500; box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 999; opacity: 0; transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 .toast.verde { border-left: 3px solid var(--green); }
 .toast.laranja { border-left: 3px solid var(--accent); }
 .toast.vermelha { border-left: 3px solid var(--red); }
+.toast.roxo { border-left: 3px solid var(--purple); }
 
-/* ── SCROLLBAR ── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
 
-/* ══ PRINT / PDF ══════════════════════════════════════════════════════ */
+/* ══ PRINT ══════════════════════════════════════════════════ */
 @media print {
   @page { size: A4; margin: 16mm 12mm; }
   body { background: white !important; color: #111 !important; }
-  header, .toolbar, .filterbar, .drawer, .drawer-overlay, .toast,
-  .modal-overlay, .enc-actions, .btn-wpp { display: none !important; }
+  header, .toolbar, .filterbar, .drawer, .drawer-overlay, .toast, .modal-overlay,
+  .status-actions, .item-btns, .btn-wpp { display: none !important; }
   .main { padding: 0 !important; overflow: visible !important; gap: 12px !important; }
   .pdf-header { display: flex !important; }
   .pdf-summary { display: flex !important; }
   .pdf-footer { display: block !important; }
   .cliente-group { border: 1px solid #ccc !important; background: white !important; break-inside: avoid; }
   .cliente-header { background: #f5f5f5 !important; border-bottom: 1px solid #ddd !important; }
-  .cliente-nome, .enc-peca { color: #111 !important; }
-  .cliente-tel, .enc-fornecedor { color: #555 !important; }
-  .enc-fornecedor { background: #f0f0f0 !important; border-color: #ccc !important; }
-  .cliente-avatar { background: #eee !important; border-color: #bbb !important; color: #333 !important; }
-  .encomenda-card { border-bottom: 1px solid #eee !important; }
-  .encomenda-card.pago { border-left-color: #16a34a !important; }
-  .encomenda-card.pendente { border-left-color: #ca8a04 !important; }
+  .status-banner { background: #fafafa !important; border-bottom: 1px solid #eee !important; }
+  .status-banner.pendente-bg { background: #fefce8 !important; }
+  .status-banner.pago-bg { background: #f0fdf4 !important; }
+  .status-banner.finalizada-bg { background: #faf5ff !important; }
+  .item-card { border-bottom: 1px solid #f0f0f0 !important; }
+  .enc-peca { color: #111 !important; }
+  .enc-fornecedor { color: #444 !important; background: #f0f0f0 !important; border-color: #ccc !important; }
   .enc-preco { color: #ea580c !important; }
   .enc-cod-tag { color: #ea580c !important; background: #fff7ed !important; border-color: #fed7aa !important; }
-  .enc-hora, .enc-num, .data-count { color: #777 !important; }
+  .enc-num, .enc-hora, .data-count { color: #777 !important; }
   .data-label { color: #ea580c !important; }
   .data-line { background: #ccc !important; }
-  .badge-status.pago { background: #dcfce7 !important; color: #16a34a !important; border-color: #86efac !important; }
-  .badge-status.pendente { background: #fef9c3 !important; color: #854d0e !important; border-color: #fde047 !important; }
+  .enc-total { border-top-color: #ddd !important; color: #555 !important; }
+  .cliente-nome { color: #111 !important; }
+  .cliente-tel { color: #555 !important; }
+  .cliente-avatar { background: #eee !important; border-color: #bbb !important; color: #333 !important; }
   .data-group { break-inside: avoid; }
 }
 .pdf-header { display: none; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 2px solid #ea580c; }
@@ -220,21 +240,17 @@ header {
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
-  <div class="logo">
-    <div class="logo-icon">📦</div>
-    Encomendas
-  </div>
+  <div class="logo"><div class="logo-icon">📦</div>Encomendas</div>
   <div class="header-stats">
     <span>Total:<strong id="stat-total">0</strong></span>
-    <span style="color:var(--text-muted)">Pend:<strong id="stat-pend" style="color:var(--yellow)">0</strong></span>
+    <span>Pend:<strong id="stat-pend" style="color:var(--yellow)">0</strong></span>
     <span>Pagos:<strong id="stat-pag" style="color:var(--green)">0</strong></span>
+    <span>Fin:<strong id="stat-fin" style="color:var(--purple)">0</strong></span>
     <span>R$<strong id="stat-val" style="color:var(--accent)">0</strong></span>
   </div>
 </header>
 
-<!-- TOOLBAR -->
 <div class="toolbar">
   <button class="btn-nova" onclick="abrirDrawer()">＋ Nova</button>
   <div class="search-wrap">
@@ -244,73 +260,85 @@ header {
   <button class="btn-pdf-top" onclick="abrirModalPDF()">🖨️ PDF</button>
 </div>
 
-<!-- FILTER BAR -->
 <div class="filterbar">
   <button class="filter-btn ativo" data-filter="todos" onclick="setFilter('todos')">Todos</button>
   <button class="filter-btn" data-filter="pendente" onclick="setFilter('pendente')">Pendentes</button>
   <button class="filter-btn" data-filter="pago" onclick="setFilter('pago')">Pagos</button>
+  <button class="filter-btn" data-filter="finalizada" onclick="setFilter('finalizada')">Finalizadas</button>
 </div>
 
-<!-- MAIN -->
 <main class="main" id="main-content">
   <div class="pdf-header" id="pdf-header">
-    <div>
-      <div class="pdf-title">📦 Relatório de Encomendas</div>
-      <div class="pdf-subtitle" id="pdf-subtitle"></div>
-    </div>
+    <div><div class="pdf-title">📦 Relatório de Encomendas</div><div class="pdf-subtitle" id="pdf-subtitle"></div></div>
     <div style="font-size:10px;color:#555;text-align:right" id="pdf-date-info"></div>
   </div>
   <div class="pdf-summary" id="pdf-summary">
     <div class="pdf-summary-item"><span>Total</span><strong id="ps-total">0</strong></div>
     <div class="pdf-summary-item"><span>Pagas</span><strong id="ps-pag" style="color:#16a34a">0</strong></div>
     <div class="pdf-summary-item"><span>Pendentes</span><strong id="ps-pend" style="color:#854d0e">0</strong></div>
+    <div class="pdf-summary-item"><span>Finalizadas</span><strong id="ps-fin" style="color:#7c3aed">0</strong></div>
     <div class="pdf-summary-item"><span>Valor total</span><strong id="ps-val" style="color:#ea580c">R$ 0,00</strong></div>
   </div>
   <div id="lista-encomendas"></div>
   <div class="pdf-footer" id="pdf-footer"></div>
 </main>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- ══ DRAWER — NOVA ENCOMENDA ══ -->
+<!-- DRAWER -->
 <div class="drawer-overlay" id="drawer-overlay" onclick="fecharDrawer()"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-handle"></div>
   <div class="drawer-title">Nova Encomenda</div>
 
+  <div class="secao-titulo">Cliente</div>
   <div class="form-group">
-    <label>Cliente *</label>
+    <label>Nome *</label>
     <input type="text" id="inp-cliente" placeholder="Nome do cliente" autocomplete="off">
   </div>
   <div class="form-group">
     <label>Telefone</label>
     <input type="tel" id="inp-tel" placeholder="(00) 00000-0000" maxlength="16">
   </div>
-  <div class="form-group">
-    <label>Peça *</label>
-    <input type="text" id="inp-peca" placeholder="Descrição da peça">
+
+  <div class="secao-titulo">Produtos</div>
+  <div class="itens-lista" id="itens-lista"></div>
+
+  <!-- FORM ADD ITEM -->
+  <div id="form-item">
+    <div class="form-group">
+      <label>Peça *</label>
+      <input type="text" id="inp-peca" placeholder="Descrição da peça">
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Cód. Peça</label><input type="text" id="inp-cod-peca" placeholder="Ex: 30088"></div>
+      <div class="form-group"><label>Cód. Fornecedor</label><input type="text" id="inp-cod-forn" placeholder="Ex: NK-8821"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Fornecedor</label><input type="text" id="inp-fornecedor" placeholder="Ex: Nakata"></div>
+      <div class="form-group"><label>Preço (R$)</label><input type="number" id="inp-preco" placeholder="0,00" min="0" step="0.01"></div>
+    </div>
+    <div class="form-group">
+      <label>Tipo</label>
+      <select id="inp-tipo">
+        <option value="encomenda">🔖 Encomenda (a pedir)</option>
+        <option value="estoque">📦 Estoque (já tem)</option>
+      </select>
+    </div>
+    <button class="btn-add-item" onclick="adicionarItem()">＋ Adicionar produto à lista</button>
   </div>
-  <div class="form-row">
-    <div class="form-group">
-      <label>Cód. Peça</label>
-      <input type="text" id="inp-cod-peca" placeholder="Ex: 30088">
-    </div>
-    <div class="form-group">
-      <label>Cód. Fornecedor</label>
-      <input type="text" id="inp-cod-forn" placeholder="Ex: NK-8821">
-    </div>
+
+  <div class="secao-titulo">Orçamento</div>
+  <div id="img-preview-wrap" class="img-preview-wrap" style="display:none">
+    <img id="img-preview" class="img-preview" src="" alt="Orçamento">
+    <button class="btn-rem-img" onclick="removerImagem()" title="Remover imagem">✕</button>
   </div>
-  <div class="form-row">
-    <div class="form-group">
-      <label>Fornecedor</label>
-      <input type="text" id="inp-fornecedor" placeholder="Ex: Nakata">
-    </div>
-    <div class="form-group">
-      <label>Preço (R$)</label>
-      <input type="number" id="inp-preco" placeholder="0,00" min="0" step="0.01">
-    </div>
+  <div class="upload-area" id="upload-area">
+    <input type="file" id="inp-imagem" accept="image/*" onchange="processarImagem(this)">
+    <div class="upload-icon">📷</div>
+    <div class="upload-txt">Toque para anexar foto do orçamento<br><strong>JPG, PNG — comprimido automaticamente</strong></div>
   </div>
+
   <div class="form-group">
     <label>Pagamento</label>
     <label class="toggle-pago" id="toggle-pago">
@@ -322,34 +350,33 @@ header {
   <button class="btn-cadastrar" onclick="cadastrar()">✓ Cadastrar Encomenda</button>
 </div>
 
-<!-- ══ MODAL EDITAR ══ -->
+<!-- MODAL IMAGEM ORÇAMENTO -->
+<div class="modal-img-overlay" id="modal-img" onclick="fecharImgModal()">
+  <img id="modal-img-src" src="" alt="Orçamento">
+  <button class="btn-fechar-img" onclick="fecharImgModal()">✕ Fechar</button>
+</div>
+
+<!-- MODAL EDITAR ITEM -->
 <div class="modal-overlay" id="modal-editar">
   <div class="modal">
-    <div class="modal-title">✏️ Editar Encomenda</div>
-    <input type="hidden" id="edit-id">
+    <div class="modal-title">✏️ Editar Produto</div>
+    <input type="hidden" id="edit-enc-id">
+    <input type="hidden" id="edit-item-idx">
+    <div class="form-group"><label>Peça</label><input type="text" id="edit-peca"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Cód. Peça</label><input type="text" id="edit-cod-peca"></div>
+      <div class="form-group"><label>Cód. Fornecedor</label><input type="text" id="edit-cod-forn"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Fornecedor</label><input type="text" id="edit-fornecedor"></div>
+      <div class="form-group"><label>Preço (R$)</label><input type="number" id="edit-preco" min="0" step="0.01"></div>
+    </div>
     <div class="form-group">
-      <label>Peça</label>
-      <input type="text" id="edit-peca">
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Cód. Peça</label>
-        <input type="text" id="edit-cod-peca">
-      </div>
-      <div class="form-group">
-        <label>Cód. Fornecedor</label>
-        <input type="text" id="edit-cod-forn">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Fornecedor</label>
-        <input type="text" id="edit-fornecedor">
-      </div>
-      <div class="form-group">
-        <label>Preço (R$)</label>
-        <input type="number" id="edit-preco" min="0" step="0.01">
-      </div>
+      <label>Tipo</label>
+      <select id="edit-tipo">
+        <option value="encomenda">🔖 Encomenda (a pedir)</option>
+        <option value="estoque">📦 Estoque (já tem)</option>
+      </select>
     </div>
     <div class="modal-btns">
       <button class="btn-cancel" onclick="fecharModal('modal-editar')">Cancelar</button>
@@ -358,14 +385,11 @@ header {
   </div>
 </div>
 
-<!-- ══ MODAL PDF ══ -->
+<!-- MODAL PDF -->
 <div class="modal-overlay" id="modal-pdf">
   <div class="modal" style="max-width:440px">
     <div class="modal-title">🖨️ Gerar PDF</div>
-    <div class="form-group">
-      <label>Fornecedor</label>
-      <select id="pdf-fornecedor"><option value="">Todos os fornecedores</option></select>
-    </div>
+    <div class="form-group"><label>Fornecedor</label><select id="pdf-fornecedor"><option value="">Todos os fornecedores</option></select></div>
     <div class="form-group">
       <label>Período</label>
       <div class="periodo-btns">
@@ -383,8 +407,9 @@ header {
       <label>Status</label>
       <select id="pdf-status">
         <option value="">Todos</option>
-        <option value="pago">Somente pagos</option>
-        <option value="pendente">Somente pendentes</option>
+        <option value="pendente">Pendentes</option>
+        <option value="pago">Pagos</option>
+        <option value="finalizada">Finalizadas</option>
       </select>
     </div>
     <div class="preview-info" id="pdf-preview-info">—</div>
@@ -397,12 +422,63 @@ header {
 
 <script>
 // ── DADOS ────────────────────────────────────────────────────────────────────
-let encomendas = JSON.parse(localStorage.getItem('encomendas_v3') || '[]');
+let encomendas = JSON.parse(localStorage.getItem('encomendas_v4') || '[]');
 let filtroAtivo = 'todos';
 let periodoAtivo = 'hoje';
+let itensDraft = [];
+let imagemDraft = null; // base64 da imagem comprimida
+
+// ── IMAGEM ────────────────────────────────────────────────────────────────────
+function processarImagem(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      // Comprimir via canvas — max 900px largura, qualidade 0.7
+      const canvas = document.createElement('canvas');
+      const MAX = 900;
+      let w = img.width, h = img.height;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      imagemDraft = canvas.toDataURL('image/jpeg', 0.7);
+      document.getElementById('img-preview').src = imagemDraft;
+      document.getElementById('img-preview-wrap').style.display = 'block';
+      document.getElementById('upload-area').style.display = 'none';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removerImagem() {
+  imagemDraft = null;
+  document.getElementById('inp-imagem').value = '';
+  document.getElementById('img-preview-wrap').style.display = 'none';
+  document.getElementById('upload-area').style.display = 'block';
+}
+
+function verImagem(id) {
+  const enc = encomendas.find(e => e.id === id);
+  if (!enc || !enc.imagem) return;
+  document.getElementById('modal-img-src').src = enc.imagem;
+  document.getElementById('modal-img').classList.add('open');
+}
+
+function fecharImgModal() {
+  document.getElementById('modal-img').classList.remove('open');
+}
 
 // ── DRAWER ───────────────────────────────────────────────────────────────────
 function abrirDrawer() {
+  itensDraft = [];
+  imagemDraft = null;
+  renderDraft();
+  document.getElementById('img-preview-wrap').style.display = 'none';
+  document.getElementById('upload-area').style.display = 'block';
+  document.getElementById('inp-imagem').value = '';
   document.getElementById('drawer-overlay').classList.add('open');
   document.getElementById('drawer').classList.add('open');
   setTimeout(() => document.getElementById('inp-cliente').focus(), 350);
@@ -421,7 +497,7 @@ document.getElementById('toggle-pago').addEventListener('click', function(e) {
   document.getElementById('toggle-label').textContent = chk.checked ? 'Pago' : 'Pendente';
 });
 
-// ── MÁSCARA TELEFONE ─────────────────────────────────────────────────────────
+// ── MÁSCARA TEL ───────────────────────────────────────────────────────────────
 document.getElementById('inp-tel').addEventListener('input', function() {
   let v = this.value.replace(/\D/g,'').substring(0,11);
   if (v.length > 6) v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
@@ -430,44 +506,91 @@ document.getElementById('inp-tel').addEventListener('input', function() {
   this.value = v;
 });
 
+// ── ITENS DRAFT ───────────────────────────────────────────────────────────────
+function adicionarItem() {
+  const peca = document.getElementById('inp-peca').value.trim();
+  if (!peca) { toast('Preencha o nome da peça.', 'vermelha'); return; }
+  itensDraft.push({
+    peca,
+    codPeca:    document.getElementById('inp-cod-peca').value.trim(),
+    codForn:    document.getElementById('inp-cod-forn').value.trim(),
+    fornecedor: document.getElementById('inp-fornecedor').value.trim(),
+    preco:      parseFloat(document.getElementById('inp-preco').value) || 0,
+    tipo:       document.getElementById('inp-tipo').value || 'encomenda',
+  });
+  ['inp-peca','inp-cod-peca','inp-cod-forn','inp-fornecedor','inp-preco'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('inp-tipo').value = 'encomenda';
+  document.getElementById('inp-peca').focus();
+  renderDraft();
+  toast('Produto adicionado!', 'laranja');
+}
+
+function renderDraft() {
+  const lista = document.getElementById('itens-lista');
+  if (!itensDraft.length) { lista.innerHTML = ''; return; }
+  lista.innerHTML = itensDraft.map((it, i) => {
+    const tipoLabel = it.tipo === 'estoque' ? '📦 Estoque' : '🔖 Encomenda';
+    return `<div class="item-draft">
+      <div class="item-draft-body">
+        <div class="item-draft-peca">${it.peca} <span style="font-size:10px;font-weight:600;color:${it.tipo==='estoque'?'var(--green)':'var(--blue)'}">${tipoLabel}</span></div>
+        <div class="item-draft-meta">
+          ${it.fornecedor ? it.fornecedor : ''}
+          ${it.codPeca ? ` · Cód: ${it.codPeca}` : ''}
+          ${it.preco > 0 ? ` · R$ ${it.preco.toLocaleString('pt-BR',{minimumFractionDigits:2})}` : ''}
+        </div>
+      </div>
+      <button class="btn-rem-item" onclick="removerDraft(${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function removerDraft(i) {
+  itensDraft.splice(i, 1);
+  renderDraft();
+}
+
 // ── CADASTRAR ─────────────────────────────────────────────────────────────────
 function cadastrar() {
-  const cliente    = document.getElementById('inp-cliente').value.trim();
-  const tel        = document.getElementById('inp-tel').value.trim();
-  const peca       = document.getElementById('inp-peca').value.trim();
-  const codPeca    = document.getElementById('inp-cod-peca').value.trim();
-  const codForn    = document.getElementById('inp-cod-forn').value.trim();
-  const fornecedor = document.getElementById('inp-fornecedor').value.trim();
-  const preco      = parseFloat(document.getElementById('inp-preco').value) || 0;
-  const pago       = document.getElementById('chk-pago').checked;
+  const cliente = document.getElementById('inp-cliente').value.trim();
+  const tel     = document.getElementById('inp-tel').value.trim();
+  const pago    = document.getElementById('chk-pago').checked;
 
-  if (!cliente || !peca) { toast('Preencha nome do cliente e peça.', 'vermelha', '⚠️'); return; }
+  if (!cliente) { toast('Preencha o nome do cliente.', 'vermelha'); return; }
+
+  // Se tem peça preenchida mas não adicionou, adiciona automaticamente
+  const pecaAtual = document.getElementById('inp-peca').value.trim();
+  if (pecaAtual) adicionarItem();
+
+  if (!itensDraft.length) { toast('Adicione pelo menos um produto.', 'vermelha'); return; }
 
   const agora = new Date();
   encomendas.unshift({
-    id: Date.now().toString(), cliente, tel, peca, codPeca, codForn,
-    fornecedor, preco, pago,
-    data: agora.toLocaleDateString('pt-BR'),
+    id: Date.now().toString(),
+    cliente, tel,
+    status: pago ? 'pago' : 'pendente',
+    itens: [...itensDraft],
+    imagem: imagemDraft,
+    data:    agora.toLocaleDateString('pt-BR'),
     dataISO: agora.toISOString().slice(0,10),
-    hora: agora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})
+    hora:    agora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})
   });
 
-  salvar();
-  renderizar();
-  limparForm();
-  fecharDrawer();   // ← FECHA o formulário após cadastrar
+  salvar(); renderizar(); limparForm(); fecharDrawer();
   toast(`✅ Encomenda de ${cliente} cadastrada!`, 'verde');
 }
 
 function limparForm() {
   ['inp-cliente','inp-tel','inp-peca','inp-cod-peca','inp-cod-forn','inp-fornecedor','inp-preco']
     .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('inp-tipo').value = 'encomenda';
   document.getElementById('chk-pago').checked = false;
   document.getElementById('toggle-pago').classList.remove('ativo');
   document.getElementById('toggle-label').textContent = 'Pendente';
+  itensDraft = []; renderDraft();
+  removerImagem();
 }
 
-function salvar() { localStorage.setItem('encomendas_v3', JSON.stringify(encomendas)); }
+function salvar() { localStorage.setItem('encomendas_v4', JSON.stringify(encomendas)); }
 
 // ── FILTRO ────────────────────────────────────────────────────────────────────
 function setFilter(f) {
@@ -477,42 +600,60 @@ function setFilter(f) {
 }
 
 // ── STATUS ────────────────────────────────────────────────────────────────────
-function togglePago(id) {
+function setStatus(id, status) {
   const enc = encomendas.find(e => e.id === id); if (!enc) return;
-  enc.pago = !enc.pago;
+  enc.status = status;
   salvar(); renderizar();
-  toast(enc.pago ? '✅ Marcada como paga!' : '🕐 Pendente novamente', enc.pago ? 'verde' : 'laranja');
+  const msgs = { pago:'✅ Marcada como paga!', pendente:'🕐 Pendente novamente', finalizada:'🏁 Encomenda finalizada!' };
+  const cores = { pago:'verde', pendente:'laranja', finalizada:'roxo' };
+  toast(msgs[status], cores[status]);
 }
 
-// ── EXCLUIR ───────────────────────────────────────────────────────────────────
-function excluir(id) {
-  if (!confirm('Excluir esta encomenda?')) return;
+// ── EXCLUIR ENCOMENDA ─────────────────────────────────────────────────────────
+function excluirEncomenda(id) {
+  if (!confirm('Excluir esta encomenda inteira?')) return;
   encomendas = encomendas.filter(e => e.id !== id);
   salvar(); renderizar();
   toast('🗑️ Encomenda excluída.', 'vermelha');
 }
 
-// ── EDITAR ────────────────────────────────────────────────────────────────────
-function abrirEditar(id) {
-  const enc = encomendas.find(e => e.id === id); if (!enc) return;
-  document.getElementById('edit-id').value       = id;
-  document.getElementById('edit-peca').value     = enc.peca;
-  document.getElementById('edit-cod-peca').value = enc.codPeca || '';
-  document.getElementById('edit-cod-forn').value = enc.codForn || '';
-  document.getElementById('edit-fornecedor').value = enc.fornecedor || '';
-  document.getElementById('edit-preco').value    = enc.preco;
+// ── EXCLUIR ITEM ──────────────────────────────────────────────────────────────
+function excluirItem(encId, idx) {
+  const enc = encomendas.find(e => e.id === encId); if (!enc) return;
+  if (enc.itens.length === 1) { excluirEncomenda(encId); return; }
+  enc.itens.splice(idx, 1);
+  salvar(); renderizar();
+  toast('🗑️ Produto removido.', 'vermelha');
+}
+
+// ── EDITAR ITEM ───────────────────────────────────────────────────────────────
+function abrirEditar(encId, idx) {
+  const enc = encomendas.find(e => e.id === encId); if (!enc) return;
+  const it = enc.itens[idx];
+  document.getElementById('edit-enc-id').value   = encId;
+  document.getElementById('edit-item-idx').value = idx;
+  document.getElementById('edit-peca').value      = it.peca;
+  document.getElementById('edit-cod-peca').value  = it.codPeca || '';
+  document.getElementById('edit-cod-forn').value  = it.codForn || '';
+  document.getElementById('edit-fornecedor').value= it.fornecedor || '';
+  document.getElementById('edit-preco').value     = it.preco;
+  document.getElementById('edit-tipo').value      = it.tipo || 'encomenda';
   document.getElementById('modal-editar').classList.add('open');
 }
 function salvarEdicao() {
-  const id = document.getElementById('edit-id').value;
-  const enc = encomendas.find(e => e.id === id); if (!enc) return;
-  enc.peca       = document.getElementById('edit-peca').value.trim() || enc.peca;
-  enc.codPeca    = document.getElementById('edit-cod-peca').value.trim();
-  enc.codForn    = document.getElementById('edit-cod-forn').value.trim();
-  enc.fornecedor = document.getElementById('edit-fornecedor').value.trim();
-  enc.preco      = parseFloat(document.getElementById('edit-preco').value) || 0;
+  const encId = document.getElementById('edit-enc-id').value;
+  const idx   = parseInt(document.getElementById('edit-item-idx').value);
+  const enc   = encomendas.find(e => e.id === encId); if (!enc) return;
+  enc.itens[idx] = {
+    peca:       document.getElementById('edit-peca').value.trim() || enc.itens[idx].peca,
+    codPeca:    document.getElementById('edit-cod-peca').value.trim(),
+    codForn:    document.getElementById('edit-cod-forn').value.trim(),
+    fornecedor: document.getElementById('edit-fornecedor').value.trim(),
+    preco:      parseFloat(document.getElementById('edit-preco').value) || 0,
+    tipo:       document.getElementById('edit-tipo').value || 'encomenda',
+  };
   salvar(); renderizar(); fecharModal('modal-editar');
-  toast('✏️ Encomenda atualizada!', 'laranja');
+  toast('✏️ Produto atualizado!', 'laranja');
 }
 
 function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
@@ -523,11 +664,14 @@ document.querySelectorAll('.modal-overlay').forEach(m =>
 // ── WHATSAPP ──────────────────────────────────────────────────────────────────
 function wppLink(tel, nome) {
   const num = tel.replace(/\D/g,'');
-  const msg = encodeURIComponent(`Olá ${nome}, tudo bem? Passando para avisar sobre sua encomenda.`);
+  const msg = encodeURIComponent(`Olá ${nome}, tudo bem? 😊\n\nPassando para avisar que a sua encomenda já chegou! 📦✅\n\nGostaria que entregássemos para você, ou prefere retirar no balcão?\n\nAguardamos seu retorno!`);
   return `https://wa.me/55${num}?text=${msg}`;
 }
 
-// ── RENDER CARDS ──────────────────────────────────────────────────────────────
+// ── RENDER ────────────────────────────────────────────────────────────────────
+const STATUS_ICON  = { pendente:'⏳', pago:'✓', finalizada:'🏁' };
+const STATUS_LABEL = { pendente:'Pendente', pago:'Pago', finalizada:'Finalizada' };
+
 function buildCards(lista) {
   if (!lista.length) return `<div class="empty"><div class="empty-icon">📦</div><p>Nenhuma encomenda encontrada.</p></div>`;
 
@@ -542,7 +686,7 @@ function buildCards(lista) {
   let html = '';
   Object.keys(porData).sort((a,b)=>b.localeCompare(a)).forEach(dataISO => {
     const grupos = porData[dataISO];
-    const total = Object.values(grupos).flat().length;
+    const totalEnc = Object.values(grupos).flat().length;
     const dFmt = dataISO !== '0000-00-00'
       ? (() => { const d = new Date(dataISO+'T12:00:00'); const s = d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}); return s.charAt(0).toUpperCase()+s.slice(1); })()
       : 'Data não registrada';
@@ -551,13 +695,14 @@ function buildCards(lista) {
       <div class="data-header">
         <span class="data-label">${dFmt}</span>
         <span class="data-line"></span>
-        <span class="data-count">${total} encomenda${total>1?'s':''}</span>
+        <span class="data-count">${totalEnc} encomenda${totalEnc>1?'s':''}</span>
       </div>`;
 
-    Object.entries(grupos).forEach(([nome, items]) => {
-      const tel = items[0].tel;
+    Object.entries(grupos).forEach(([nome, encs]) => {
+      const tel = encs[0].tel;
       const ini = nome.split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
       const temTel = tel && tel.replace(/\D/g,'').length >= 10;
+      const totalCliente = encs.reduce((s,e)=>s+e.itens.reduce((ss,it)=>ss+it.preco,0),0);
 
       html += `<div class="cliente-group">
         <div class="cliente-header">
@@ -565,73 +710,101 @@ function buildCards(lista) {
             <div class="cliente-avatar">${ini}</div>
             <div>
               <div class="cliente-nome">${nome}</div>
-              <div class="cliente-tel">${tel||'Sem telefone'} · ${items.length} item${items.length>1?'s':''}</div>
+              <div class="cliente-tel">${tel||'Sem telefone'} · ${encs.length} encomenda${encs.length>1?'s':''} · R$ ${totalCliente.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>
             </div>
           </div>
           ${temTel?`<a class="btn-wpp" href="${wppLink(tel,nome)}" target="_blank">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.855L.057 23.886c-.06.217.002.45.163.606.116.112.27.171.427.171.059 0 .119-.008.178-.025l6.248-1.638A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.897 0-3.688-.506-5.237-1.389l-.374-.22-3.875 1.016 1.005-3.762-.243-.386A9.936 9.936 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
             WhatsApp</a>`:''}
-        </div>
-        ${items.map((e,i) => {
-          const codigos = [e.codPeca ? `Peça: ${e.codPeca}` : '', e.codForn ? `Forn: ${e.codForn}` : ''].filter(Boolean);
-          return `<div class="encomenda-card ${e.pago?'pago':'pendente'}">
-            <div class="enc-num">#${i+1}</div>
-            <div class="enc-body">
-              <div class="enc-peca">${e.peca}</div>
-              ${codigos.length?`<div class="enc-codigos">${codigos.map(c=>`<span class="enc-cod-tag">${c}</span>`).join('')}</div>`:''}
-              <div class="enc-meta">
-                ${e.fornecedor?`<span class="enc-fornecedor">${e.fornecedor}</span>`:''}
-                ${e.preco>0?`<span class="enc-preco">R$ ${e.preco.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>`:''}
-                <span class="enc-hora">${e.hora||''}</span>
-              </div>
+        </div>`;
+
+      // Cada encomenda do cliente
+      encs.forEach(enc => {
+        const st = enc.status || 'pendente';
+        const totalEncomenda = enc.itens.reduce((s,it)=>s+it.preco,0);
+
+        html += `<div class="encomenda-wrap">
+          <div class="status-banner">
+            <div class="status-esquerda">
+              <span class="status-label ${st}">${STATUS_ICON[st]} ${STATUS_LABEL[st]}</span>
+              <span class="status-hora">${enc.hora||enc.data}</span>
+              <button class="badge pendente${st==='pendente'?' inativo':''}" onclick="setStatus('${enc.id}','pendente')" ${st==='pendente'?'disabled':''}title="Marcar pendente">⏳</button>
+              <button class="badge pago${st==='pago'?' inativo':''}" onclick="setStatus('${enc.id}','pago')" ${st==='pago'?'disabled':''}title="Marcar pago">✓ Pago</button>
             </div>
-            <div class="enc-actions">
-              <button class="badge-status ${e.pago?'pago':'pendente'}" onclick="togglePago('${e.id}')">${e.pago?'✓ Pago':'⏳ Pendente'}</button>
-              <div class="enc-btns">
-                <button class="btn-icon" onclick="abrirEditar('${e.id}')" title="Editar">✏️</button>
-                <button class="btn-icon del" onclick="excluir('${e.id}')" title="Excluir">🗑</button>
-              </div>
+            <div class="status-actions">
+              <button class="badge finalizada${st==='finalizada'?' inativo':''}" onclick="setStatus('${enc.id}','finalizada')" ${st==='finalizada'?'disabled':''}>🏁 Finalizar</button>
+              <button class="btn-icon del" onclick="excluirEncomenda('${enc.id}')" title="Excluir encomenda">🗑</button>
             </div>
-          </div>`;
-        }).join('')}
-      </div>`;
+          </div>
+          ${enc.itens.map((it,idx) => {
+            const cods = [it.codPeca?`Peça: ${it.codPeca}`:'', it.codForn?`Forn: ${it.codForn}`:''].filter(Boolean);
+            const tipo = it.tipo || 'encomenda';
+            const tipoLabel = tipo === 'estoque' ? '📦 Estoque' : '🔖 Encomenda';
+            return `<div class="item-card">
+              <div class="enc-num">#${idx+1}</div>
+              <div>
+                <div class="enc-peca">${it.peca}</div>
+                ${cods.length?`<div class="enc-codigos">${cods.map(c=>`<span class="enc-cod-tag">${c}</span>`).join('')}</div>`:''}
+                <div class="enc-meta">
+                  <span class="tag-tipo ${tipo}">${tipoLabel}</span>
+                  ${it.fornecedor?`<span class="enc-fornecedor">${it.fornecedor}</span>`:''}
+                  ${it.preco>0?`<span class="enc-preco">R$ ${it.preco.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>`:''}
+                </div>
+              </div>
+              <div class="item-btns">
+                <button class="btn-icon" onclick="abrirEditar('${enc.id}',${idx})">✏️</button>
+                <button class="btn-icon del" onclick="excluirItem('${enc.id}',${idx})">🗑</button>
+              </div>
+            </div>`;
+          }).join('')}
+          ${enc.itens.length>1?`<div class="enc-total">Total: <strong>R$ ${totalEncomenda.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong>${enc.imagem?` <button class="btn-orcamento" onclick="verImagem('${enc.id}')">📷 Ver orçamento</button>`:''}</div>`
+          : enc.imagem ? `<div class="enc-total">${enc.imagem?`<button class="btn-orcamento" onclick="verImagem('${enc.id}')">📷 Ver orçamento</button>`:''}</div>` : ''}
+        </div>`;
+      });
+
+      html += `</div>`; // fecha cliente-group
     });
-    html += `</div>`;
+    html += `</div>`; // fecha data-group
   });
   return html;
 }
 
-// ── RENDERIZAR ────────────────────────────────────────────────────────────────
 function renderizar() {
   const busca = document.getElementById('inp-busca').value.toLowerCase();
   const lista = encomendas.filter(e => {
-    const mf = filtroAtivo==='todos' || (filtroAtivo==='pago'&&e.pago) || (filtroAtivo==='pendente'&&!e.pago);
-    const mb = !busca || e.cliente.toLowerCase().includes(busca)
-      || e.peca.toLowerCase().includes(busca)
-      || (e.fornecedor||'').toLowerCase().includes(busca)
-      || (e.codPeca||'').toLowerCase().includes(busca)
-      || (e.codForn||'').toLowerCase().includes(busca);
+    const st = e.status || 'pendente';
+    const mf = filtroAtivo==='todos' || st===filtroAtivo;
+    const mb = !busca
+      || e.cliente.toLowerCase().includes(busca)
+      || e.itens.some(it =>
+          it.peca.toLowerCase().includes(busca)
+          || (it.fornecedor||'').toLowerCase().includes(busca)
+          || (it.codPeca||'').toLowerCase().includes(busca)
+          || (it.codForn||'').toLowerCase().includes(busca)
+        );
     return mf && mb;
   });
 
-  const tot = encomendas.length, pgs = encomendas.filter(e=>e.pago).length;
-  const val = encomendas.reduce((s,e)=>s+e.preco,0);
+  const tot = encomendas.length;
+  const pgs = encomendas.filter(e=>(e.status||'pendente')==='pago').length;
+  const pen = encomendas.filter(e=>(e.status||'pendente')==='pendente').length;
+  const fin = encomendas.filter(e=>(e.status||'pendente')==='finalizada').length;
+  const val = encomendas.reduce((s,e)=>s+e.itens.reduce((ss,it)=>ss+it.preco,0),0);
   document.getElementById('stat-total').textContent = tot;
   document.getElementById('stat-pag').textContent   = pgs;
-  document.getElementById('stat-pend').textContent  = tot-pgs;
+  document.getElementById('stat-pend').textContent  = pen;
+  document.getElementById('stat-fin').textContent   = fin;
   document.getElementById('stat-val').textContent   = val.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-
   document.getElementById('lista-encomendas').innerHTML = buildCards(lista);
 }
 
 // ── PDF ───────────────────────────────────────────────────────────────────────
 function abrirModalPDF() {
-  const fns = [...new Set(encomendas.map(e=>e.fornecedor).filter(Boolean))].sort();
+  const fns = [...new Set(encomendas.flatMap(e=>e.itens.map(it=>it.fornecedor)).filter(Boolean))].sort();
   const sel = document.getElementById('pdf-fornecedor');
   sel.innerHTML = '<option value="">Todos os fornecedores</option>';
-  fns.forEach(f => { const o = document.createElement('option'); o.value=f; o.textContent=f; sel.appendChild(o); });
-  setPeriodo('hoje');
-  atualizarPreview();
+  fns.forEach(f => { const o=document.createElement('option'); o.value=f; o.textContent=f; sel.appendChild(o); });
+  setPeriodo('hoje'); atualizarPreview();
   document.getElementById('modal-pdf').classList.add('open');
   ['pdf-fornecedor','pdf-status','pdf-data-ini','pdf-data-fim'].forEach(id =>
     document.getElementById(id).addEventListener('change', atualizarPreview)
@@ -641,23 +814,21 @@ function abrirModalPDF() {
 function setPeriodo(p) {
   periodoAtivo = p;
   document.querySelectorAll('.periodo-btn').forEach(b => b.classList.toggle('ativo', b.dataset.p===p));
-  document.getElementById('custom-dates').style.display = p==='custom' ? 'flex' : 'none';
-  if (p !== 'custom') atualizarPreview();
+  document.getElementById('custom-dates').style.display = p==='custom'?'flex':'none';
+  if (p!=='custom') atualizarPreview();
 }
 
 function getIntervalo() {
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   const iso = d => d.toISOString().slice(0,10);
-  if (periodoAtivo==='hoje') return { ini: iso(hoje), fim: iso(hoje) };
+  if (periodoAtivo==='hoje') return {ini:iso(hoje),fim:iso(hoje)};
   if (periodoAtivo==='semana') {
-    const dom = new Date(hoje); dom.setDate(hoje.getDate()-hoje.getDay());
-    const sab = new Date(dom); sab.setDate(dom.getDate()+6);
-    return { ini: iso(dom), fim: iso(sab) };
+    const dom=new Date(hoje); dom.setDate(hoje.getDate()-hoje.getDay());
+    const sab=new Date(dom); sab.setDate(dom.getDate()+6);
+    return {ini:iso(dom),fim:iso(sab)};
   }
-  if (periodoAtivo==='mes') {
-    return { ini: iso(new Date(hoje.getFullYear(),hoje.getMonth(),1)), fim: iso(new Date(hoje.getFullYear(),hoje.getMonth()+1,0)) };
-  }
-  return { ini: document.getElementById('pdf-data-ini').value, fim: document.getElementById('pdf-data-fim').value };
+  if (periodoAtivo==='mes') return {ini:iso(new Date(hoje.getFullYear(),hoje.getMonth(),1)),fim:iso(new Date(hoje.getFullYear(),hoje.getMonth()+1,0))};
+  return {ini:document.getElementById('pdf-data-ini').value,fim:document.getElementById('pdf-data-fim').value};
 }
 
 function filtrarPDF() {
@@ -666,42 +837,46 @@ function filtrarPDF() {
   const {ini,fim} = getIntervalo();
   return encomendas.filter(e => {
     const d = e.dataISO||'';
-    return (!ini||d>=ini) && (!fim||d<=fim)
-      && (!forn||e.fornecedor===forn)
-      && (!status||(status==='pago'?e.pago:!e.pago));
+    const st = e.status||'pendente';
+    const dentroData = (!ini||d>=ini)&&(!fim||d<=fim);
+    const matchStatus = !status||st===status;
+    const matchForn = !forn||e.itens.some(it=>it.fornecedor===forn);
+    return dentroData && matchStatus && matchForn;
   });
 }
 
 function atualizarPreview() {
   const lista = filtrarPDF();
-  const val = lista.reduce((s,e)=>s+e.preco,0);
-  const pgs = lista.filter(e=>e.pago).length;
-  const forn = document.getElementById('pdf-fornecedor').value || 'Todos';
+  const totalItens = lista.reduce((s,e)=>s+e.itens.length,0);
+  const val = lista.reduce((s,e)=>s+e.itens.reduce((ss,it)=>ss+it.preco,0),0);
+  const forn = document.getElementById('pdf-fornecedor').value||'Todos';
   document.getElementById('pdf-preview-info').innerHTML =
-    `<strong>${lista.length}</strong> encomenda${lista.length!==1?'s':''} · Fornecedor: <strong>${forn}</strong> · R$ <strong>${val.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong> · Pagas: <strong>${pgs}</strong> · Pendentes: <strong>${lista.length-pgs}</strong>`;
+    `<strong>${lista.length}</strong> encomenda${lista.length!==1?'s':''} · <strong>${totalItens}</strong> produto${totalItens!==1?'s':''} · Fornecedor: <strong>${forn}</strong> · R$ <strong>${val.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong>`;
 }
 
 function gerarPDF() {
   const lista = filtrarPDF();
   if (!lista.length) { toast('Nenhuma encomenda nesse filtro.', 'vermelha'); return; }
   const {ini,fim} = getIntervalo();
-  const forn   = document.getElementById('pdf-fornecedor').value || 'Todos os fornecedores';
-  const fmtD   = d => d ? new Date(d+'T12:00:00').toLocaleDateString('pt-BR') : '';
-  const pLabels = {hoje:`Hoje — ${fmtD(ini)}`, semana:`Semana: ${fmtD(ini)} a ${fmtD(fim)}`, mes:`Mês: ${fmtD(ini)} a ${fmtD(fim)}`, custom:`${fmtD(ini)} a ${fmtD(fim)}`};
-  const val = lista.reduce((s,e)=>s+e.preco,0), pgs = lista.filter(e=>e.pago).length;
+  const forn = document.getElementById('pdf-fornecedor').value||'Todos os fornecedores';
+  const fmtD = d => d?new Date(d+'T12:00:00').toLocaleDateString('pt-BR'):'';
+  const pLabels = {hoje:`Hoje — ${fmtD(ini)}`,semana:`Semana: ${fmtD(ini)} a ${fmtD(fim)}`,mes:`Mês: ${fmtD(ini)} a ${fmtD(fim)}`,custom:`${fmtD(ini)} a ${fmtD(fim)}`};
+  const val = lista.reduce((s,e)=>s+e.itens.reduce((ss,it)=>ss+it.preco,0),0);
+  const pgs = lista.filter(e=>(e.status||'pendente')==='pago').length;
+  const fin = lista.filter(e=>(e.status||'pendente')==='finalizada').length;
 
   document.getElementById('pdf-subtitle').textContent = `Fornecedor: ${forn} · ${pLabels[periodoAtivo]}`;
   document.getElementById('pdf-date-info').innerHTML  = `Gerado em: ${new Date().toLocaleString('pt-BR')}<br>Total: ${lista.length} encomenda${lista.length!==1?'s':''}`;
   document.getElementById('ps-total').textContent = lista.length;
   document.getElementById('ps-pag').textContent   = pgs;
-  document.getElementById('ps-pend').textContent  = lista.length-pgs;
+  document.getElementById('ps-pend').textContent  = lista.length-pgs-fin;
+  document.getElementById('ps-fin').textContent   = fin;
   document.getElementById('ps-val').textContent   = val.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
   document.getElementById('pdf-footer').textContent = `Encomendas · ${new Date().toLocaleString('pt-BR')} · ${lista.length} registro${lista.length!==1?'s':''}`;
-
   document.getElementById('lista-encomendas').innerHTML = buildCards(lista);
   fecharModal('modal-pdf');
-  setTimeout(() => window.print(), 300);
-  setTimeout(() => renderizar(), 1800);
+  setTimeout(()=>window.print(),300);
+  setTimeout(()=>renderizar(),1800);
 }
 
 // ── TOAST ─────────────────────────────────────────────────────────────────────
@@ -710,7 +885,7 @@ function toast(msg, tipo) {
   const el = document.getElementById('toast');
   el.textContent = msg; el.className = `toast ${tipo} show`;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+  toastTimer = setTimeout(()=>el.classList.remove('show'),2800);
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
