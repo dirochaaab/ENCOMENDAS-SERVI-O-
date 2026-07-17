@@ -256,6 +256,26 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 .pdf-summary-item span:first-child { font-size: 9px; color: #777; text-transform: uppercase; letter-spacing: 0.5px; }
 .pdf-summary-item strong { font-size: 13px; font-weight: 700; }
 .pdf-footer { display: none; text-align: right; font-size: 10px; color: #888; margin-top: 16px; padding-top: 8px; border-top: 1px solid #ddd; }
+
+/* CHECKLIST PDF */
+.check-item { display:flex; align-items:center; gap:8px; padding:6px 10px; border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; }
+.check-item:last-child { border-bottom:none; }
+.check-item:hover { background:rgba(255,255,255,0.04); }
+.check-item input[type=checkbox] { accent-color:var(--accent); width:15px; height:15px; flex-shrink:0; cursor:pointer; }
+.check-item-body { flex:1; min-width:0; }
+.check-item-peca { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.check-item-meta { font-size:10px; color:var(--text-muted); }
+.check-item-preco { font-size:12px; font-weight:700; color:var(--accent); flex-shrink:0; }
+.check-sep { padding:4px 10px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--accent); background:rgba(249,115,22,0.06); border-bottom:1px solid var(--border); }
+
+/* TABELA PDF IMPRESSÃO */
+.pdf-tabela { width:100%; border-collapse:collapse; font-size:9px; }
+.pdf-tabela th { background:#f0f0f0; font-size:8px; text-transform:uppercase; letter-spacing:0.5px; padding:3px 5px; border:1px solid #ccc; text-align:left; }
+.pdf-tabela td { padding:3px 5px; border:1px solid #ddd; vertical-align:top; line-height:1.3; }
+.pdf-tabela tr:nth-child(even) td { background:#fafafa; }
+.pdf-tabela .td-cliente { font-weight:700; }
+.pdf-tabela .td-status-pago { color:#15803d; font-weight:700; }
+.pdf-tabela .td-status-pend { color:#854d0e; font-weight:700; }
 </style>
 </head>
 <body>
@@ -407,12 +427,9 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
 
 <!-- MODAL PDF -->
 <div class="modal-overlay" id="modal-pdf">
-  <div class="modal" style="max-width:460px">
+  <div class="modal" style="max-width:500px">
     <div class="modal-title">📤 Exportar Relatório</div>
-    <div class="form-group">
-      <label>Fornecedores (toque para selecionar)</label>
-      <div id="forn-chips" style="display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);min-height:42px;"></div>
-    </div>
+
     <div class="form-group">
       <label>Período</label>
       <div class="periodo-btns">
@@ -423,19 +440,31 @@ header { background: var(--surface); border-bottom: 1px solid var(--border); pad
       </div>
     </div>
     <div class="custom-dates" id="custom-dates" style="display:none">
-      <div class="form-group"><label>De</label><input type="date" id="pdf-data-ini" oninput="atualizarPreview()"></div>
-      <div class="form-group"><label>Até</label><input type="date" id="pdf-data-fim" oninput="atualizarPreview()"></div>
+      <div class="form-group"><label>De</label><input type="date" id="pdf-data-ini" oninput="carregarCheckboxes()"></div>
+      <div class="form-group"><label>Até</label><input type="date" id="pdf-data-fim" oninput="carregarCheckboxes()"></div>
     </div>
     <div class="form-group">
       <label>Status</label>
-      <select id="pdf-status" onchange="atualizarPreview()">
-        <option value="abertos">Pendentes + Pagos (em aberto)</option>
+      <select id="pdf-status" onchange="carregarCheckboxes()">
+        <option value="abertos">Pendentes + Pagos</option>
         <option value="pendente">Somente Pendentes</option>
         <option value="pago">Somente Pagos</option>
         <option value="finalizada">Finalizadas</option>
         <option value="">Todos</option>
       </select>
     </div>
+
+    <div class="form-group">
+      <label style="display:flex;justify-content:space-between;align-items:center">
+        Selecionar produtos para o relatório
+        <span style="display:flex;gap:6px">
+          <button onclick="selecionarTodos(true)" style="background:none;border:none;color:var(--accent);font-size:11px;font-weight:600;cursor:pointer">Todos</button>
+          <button onclick="selecionarTodos(false)" style="background:none;border:none;color:var(--text-muted);font-size:11px;font-weight:600;cursor:pointer">Nenhum</button>
+        </span>
+      </label>
+      <div id="pdf-checklist" style="max-height:240px;overflow-y:auto;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 0;"></div>
+    </div>
+
     <div class="preview-info" id="pdf-preview-info">—</div>
     <div class="modal-btns" style="flex-wrap:wrap;gap:6px">
       <button class="btn-cancel" onclick="fecharModal('modal-pdf')">Cancelar</button>
@@ -652,7 +681,6 @@ function cadastrar() {
 
   if (!cliente) { toast('Preencha o nome do cliente.', 'vermelha'); return; }
 
-  // Se tem peça preenchida mas não adicionou, adiciona automaticamente
   const pecaAtual = document.getElementById('inp-peca').value.trim();
   if (pecaAtual) adicionarItem();
 
@@ -662,7 +690,8 @@ function cadastrar() {
   encomendas.unshift({
     id: Date.now().toString(),
     cliente, tel,
-    status: pago ? 'pago' : 'pendente',
+    pago:       pago,        // independente
+    finalizada: false,       // independente
     itens: [...itensDraft],
     imagem: imagemDraft,
     data:    agora.toLocaleDateString('pt-BR'),
@@ -694,14 +723,41 @@ function setFilter(f) {
   renderizar();
 }
 
-// ── STATUS ────────────────────────────────────────────────────────────────────
-function setStatus(id, status) {
+// ── STATUS INDEPENDENTES ──────────────────────────────────────────────────────
+function togglePago(id) {
   const enc = encomendas.find(e => e.id === id); if (!enc) return;
-  enc.status = status;
+  // migração: se tinha status antigo, converte
+  if (enc.status !== undefined && enc.pago === undefined) {
+    enc.pago = enc.status === 'pago';
+    enc.finalizada = enc.status === 'finalizada';
+    delete enc.status;
+  }
+  enc.pago = !enc.pago;
   salvar(); renderizar();
-  const msgs = { pago:'✅ Marcada como paga!', pendente:'🕐 Pendente novamente', finalizada:'🏁 Encomenda finalizada!' };
-  const cores = { pago:'verde', pendente:'laranja', finalizada:'roxo' };
-  toast(msgs[status], cores[status]);
+  toast(enc.pago ? '✅ Marcado como pago!' : '↩️ Pagamento removido', enc.pago ? 'verde' : 'laranja');
+}
+
+function toggleFinalizar(id) {
+  const enc = encomendas.find(e => e.id === id); if (!enc) return;
+  if (enc.status !== undefined && enc.finalizada === undefined) {
+    enc.pago = enc.status === 'pago';
+    enc.finalizada = enc.status === 'finalizada';
+    delete enc.status;
+  }
+  enc.finalizada = !enc.finalizada;
+  salvar(); renderizar();
+  toast(enc.finalizada ? '🏁 Encomenda finalizada!' : '↩️ Reaberta', enc.finalizada ? 'roxo' : 'laranja');
+}
+
+// helper: pega estado real da encomenda (suporta formato antigo)
+function getEnc(enc) {
+  if (enc.status !== undefined && enc.pago === undefined) {
+    return {
+      pago: enc.status === 'pago',
+      finalizada: enc.status === 'finalizada'
+    };
+  }
+  return { pago: !!enc.pago, finalizada: !!enc.finalizada };
 }
 
 // ── EXCLUIR ENCOMENDA ─────────────────────────────────────────────────────────
@@ -815,20 +871,25 @@ function buildCards(lista) {
 
       // Cada encomenda do cliente
       encs.forEach(enc => {
-        const st = enc.status || 'pendente';
+        const { pago, finalizada } = getEnc(enc);
         const totalEncomenda = enc.itens.reduce((s,it)=>s+it.preco,0);
 
         html += `<div class="encomenda-wrap">
           <div class="status-banner">
             <div class="status-esquerda">
-              <span class="status-label ${st}">${STATUS_ICON[st]} ${STATUS_LABEL[st]}</span>
               <span class="status-hora">${enc.hora||enc.data}</span>
-              <button class="badge pendente${st==='pendente'?' inativo':''}" onclick="setStatus('${enc.id}','pendente')" ${st==='pendente'?'disabled':''}title="Marcar pendente">⏳</button>
-              <button class="badge pago${st==='pago'?' inativo':''}" onclick="setStatus('${enc.id}','pago')" ${st==='pago'?'disabled':''}title="Marcar pago">✓ Pago</button>
+              ${pago
+                ? `<span class="badge pago inativo">✓ Pago</span>`
+                : `<button class="badge pendente" onclick="togglePago('${enc.id}')">⏳ Pendente — marcar pago</button>`}
             </div>
             <div class="status-actions">
-              <button class="badge finalizada${st==='finalizada'?' inativo':''}" onclick="setStatus('${enc.id}','finalizada')" ${st==='finalizada'?'disabled':''}>🏁 Finalizar</button>
-              <button class="btn-icon del" onclick="excluirEncomenda('${enc.id}')" title="Excluir encomenda">🗑</button>
+              ${pago && !finalizada
+                ? `<button class="badge finalizada" onclick="toggleFinalizar('${enc.id}')">🏁 Finalizar</button>`
+                : finalizada
+                ? `<span class="badge finalizada inativo">🏁 Finalizada</span><button class="badge pendente" style="font-size:9px;padding:2px 6px" onclick="toggleFinalizar('${enc.id}')">↩ Reabrir</button>`
+                : ''}
+              ${pago ? `<button class="badge" style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.3);font-size:9px" onclick="togglePago('${enc.id}')" title="Remover pagamento">✕ Pago</button>` : ''}
+              <button class="btn-icon del" onclick="excluirEncomenda('${enc.id}')" title="Excluir">🗑</button>
             </div>
           </div>
           ${enc.itens.map((it,idx) => {
@@ -867,12 +928,12 @@ function buildCards(lista) {
 function renderizar() {
   const busca = document.getElementById('inp-busca').value.toLowerCase();
   const lista = encomendas.filter(e => {
-    const st = e.status || 'pendente';
+    const { pago, finalizada } = getEnc(e);
     const visivel =
-      filtroAtivo === 'pendente'   ? st === 'pendente' :
-      filtroAtivo === 'pago'       ? st === 'pago' :
-      filtroAtivo === 'finalizada' ? st === 'finalizada' :
-      /* todos */                    st !== 'finalizada';
+      filtroAtivo === 'pendente'   ? (!pago && !finalizada) :
+      filtroAtivo === 'pago'       ? (pago && !finalizada) :
+      filtroAtivo === 'finalizada' ? finalizada :
+      /* todos */                    !finalizada;
     const mb = !busca
       || e.cliente.toLowerCase().includes(busca)
       || e.itens.some(it =>
@@ -885,9 +946,9 @@ function renderizar() {
   });
 
   const tot = encomendas.length;
-  const pgs = encomendas.filter(e=>(e.status||'pendente')==='pago').length;
-  const pen = encomendas.filter(e=>(e.status||'pendente')==='pendente').length;
-  const fin = encomendas.filter(e=>(e.status||'pendente')==='finalizada').length;
+  const pgs = encomendas.filter(e=>{ const r=getEnc(e); return r.pago && !r.finalizada; }).length;
+  const pen = encomendas.filter(e=>{ const r=getEnc(e); return !r.pago && !r.finalizada; }).length;
+  const fin = encomendas.filter(e=>getEnc(e).finalizada).length;
   const val = encomendas.reduce((s,e)=>s+e.itens.reduce((ss,it)=>ss+it.preco,0),0);
   document.getElementById('stat-total').textContent = tot;
   document.getElementById('stat-pag').textContent   = pgs;
@@ -898,42 +959,78 @@ function renderizar() {
 }
 
 // ── PDF ───────────────────────────────────────────────────────────────────────
-let fornSelecionados = new Set(); // conjunto de fornecedores selecionados
+let fornSelecionados = new Set();
+let itensSelecionados = new Set(); // "encId::itemIdx"
 
 function abrirModalPDF() {
   fornSelecionados = new Set();
-  const fns = [...new Set(encomendas.flatMap(e=>e.itens.map(it=>it.fornecedor)).filter(Boolean))].sort();
-  const chips = document.getElementById('forn-chips');
-  chips.innerHTML = fns.length
-    ? fns.map(f => `<button class="chip-forn" data-f="${f}" onclick="toggleForn('${f}')">${f}</button>`).join('')
-    : '<span style="font-size:11px;color:var(--text-dim)">Nenhum fornecedor cadastrado</span>';
-  // estilo chip
-  if (!document.getElementById('chip-style')) {
-    const s = document.createElement('style');
-    s.id = 'chip-style';
-    s.textContent = `.chip-forn{background:var(--card);border:1px solid var(--border);border-radius:999px;color:var(--text-muted);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:4px 10px;cursor:pointer;transition:all 0.15s}.chip-forn.on{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}`;
-    document.head.appendChild(s);
-  }
-  document.getElementById('pdf-status').value = 'abertos';
   setPeriodo('hoje');
-  atualizarPreview();
+  carregarCheckboxes();
   document.getElementById('modal-pdf').classList.add('open');
 }
 
-function toggleForn(f) {
-  if (fornSelecionados.has(f)) fornSelecionados.delete(f);
-  else fornSelecionados.add(f);
-  document.querySelectorAll('.chip-forn').forEach(c => {
-    c.classList.toggle('on', fornSelecionados.has(c.dataset.f));
+function carregarCheckboxes() {
+  const lista = filtrarPDF();
+  const box = document.getElementById('pdf-checklist');
+  if (!lista.length) {
+    box.innerHTML = '<div style="padding:12px;text-align:center;font-size:12px;color:var(--text-dim)">Nenhuma encomenda nesse filtro.</div>';
+    itensSelecionados = new Set();
+    atualizarPreview(); return;
+  }
+
+  // mantém selecionados que ainda existem
+  const novoSet = new Set();
+  lista.forEach(enc => enc.itens.forEach((_,i) => {
+    const k = `${enc.id}::${i}`;
+    if (itensSelecionados.size === 0 || itensSelecionados.has(k)) novoSet.add(k);
+  }));
+  itensSelecionados = novoSet;
+
+  let html = '';
+  lista.forEach(enc => {
+    const { pago, finalizada } = getEnc(enc);
+    const stLabel = finalizada ? '🏁' : pago ? '✅' : '⏳';
+    html += `<div class="check-sep">${stLabel} ${enc.cliente} · ${enc.data}</div>`;
+    enc.itens.forEach((it, i) => {
+      const k = `${enc.id}::${i}`;
+      const chk = itensSelecionados.has(k) ? 'checked' : '';
+      html += `<label class="check-item">
+        <input type="checkbox" ${chk} onchange="toggleItem('${k}',this.checked)">
+        <div class="check-item-body">
+          <div class="check-item-peca">${it.peca}</div>
+          <div class="check-item-meta">${[it.fornecedor, it.codPeca?'Cód:'+it.codPeca:''].filter(Boolean).join(' · ')}</div>
+        </div>
+        ${it.preco>0?`<span class="check-item-preco">R$ ${it.preco.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>`:''}
+      </label>`;
+    });
   });
+  box.innerHTML = html;
   atualizarPreview();
+}
+
+function toggleItem(k, checked) {
+  if (checked) itensSelecionados.add(k);
+  else itensSelecionados.delete(k);
+  atualizarPreview();
+}
+
+function selecionarTodos(val) {
+  document.querySelectorAll('#pdf-checklist input[type=checkbox]').forEach(cb => {
+    cb.checked = val;
+    const k = cb.closest('label')?.querySelector('input')?.getAttribute('onchange')?.match(/'([^']+)'/)?.[1];
+  });
+  // mais simples: recarregar com todos ou nenhum
+  const lista = filtrarPDF();
+  itensSelecionados = new Set();
+  if (val) lista.forEach(enc => enc.itens.forEach((_,i) => itensSelecionados.add(`${enc.id}::${i}`)));
+  carregarCheckboxes();
 }
 
 function setPeriodo(p) {
   periodoAtivo = p;
   document.querySelectorAll('.periodo-btn').forEach(b => b.classList.toggle('ativo', b.dataset.p===p));
   document.getElementById('custom-dates').style.display = p==='custom'?'flex':'none';
-  if (p!=='custom') atualizarPreview();
+  if (p!=='custom') carregarCheckboxes();
 }
 
 function getIntervalo() {
@@ -954,87 +1051,115 @@ function filtrarPDF() {
   const {ini,fim} = getIntervalo();
   return encomendas.filter(e => {
     const d = e.dataISO||'';
-    const st = e.status||'pendente';
+    const { pago, finalizada } = getEnc(e);
     const dentroData = (!ini||d>=ini)&&(!fim||d<=fim);
-    const matchStatus = statusFiltro==='' ? true
-      : statusFiltro==='abertos' ? (st==='pendente'||st==='pago')
-      : st===statusFiltro;
-    // Fornecedor: se nenhum selecionado = todos; se alguns = só esses
-    const matchForn = fornSelecionados.size===0
-      || e.itens.some(it=>fornSelecionados.has(it.fornecedor));
-    return dentroData && matchStatus && matchForn;
+    const matchStatus =
+      statusFiltro==='' ? true :
+      statusFiltro==='abertos' ? !finalizada :
+      statusFiltro==='pendente' ? (!pago&&!finalizada) :
+      statusFiltro==='pago' ? (pago&&!finalizada) :
+      statusFiltro==='finalizada' ? finalizada : true;
+    return dentroData && matchStatus;
   });
 }
 
 function atualizarPreview() {
+  const total = itensSelecionados.size;
   const lista = filtrarPDF();
-  const val = lista.reduce((s,e)=>s+e.itens.reduce((ss,it)=>ss+it.preco,0),0);
-  const pgs = lista.filter(e=>(e.status||'pendente')==='pago').length;
-  const pen = lista.filter(e=>(e.status||'pendente')==='pendente').length;
-  const fornLabel = fornSelecionados.size===0?'Todos':[...fornSelecionados].join(', ');
+  let val = 0;
+  lista.forEach(enc => enc.itens.forEach((it,i) => {
+    if (itensSelecionados.has(`${enc.id}::${i}`)) val += it.preco;
+  }));
   document.getElementById('pdf-preview-info').innerHTML =
-    `<strong>${lista.length}</strong> encomenda${lista.length!==1?'s':''} · ${pen} pendente${pen!==1?'s':''} · ${pgs} pago${pgs!==1?'s':''} · <strong>R$ ${val.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong><br><small>Fornecedor: ${fornLabel}</small>`;
+    `<strong>${total}</strong> produto${total!==1?'s':''} selecionado${total!==1?'s':''} · Total: <strong>R$ ${val.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong>`;
 }
 
 function gerarPDF() {
+  if (!itensSelecionados.size) { toast('Selecione pelo menos um produto.', 'vermelha'); return; }
   const lista = filtrarPDF();
-  if (!lista.length) { toast('Nenhuma encomenda nesse filtro.', 'vermelha'); return; }
   const {ini,fim} = getIntervalo();
   const fmtD = d => d?new Date(d+'T12:00:00').toLocaleDateString('pt-BR'):'';
   const pLabels = {hoje:`Hoje — ${fmtD(ini)}`,semana:`Semana: ${fmtD(ini)} a ${fmtD(fim)}`,mes:`Mês: ${fmtD(ini)} a ${fmtD(fim)}`,custom:`${fmtD(ini)} a ${fmtD(fim)}`};
-  const fornLabel = fornSelecionados.size===0?'Todos':[...fornSelecionados].join(', ');
-  const val = lista.reduce((s,e)=>s+e.itens.reduce((ss,it)=>ss+it.preco,0),0);
-  const pgs = lista.filter(e=>(e.status||'pendente')==='pago').length;
-  const fin = lista.filter(e=>(e.status||'pendente')==='finalizada').length;
 
-  document.getElementById('pdf-subtitle').textContent = `Fornecedor: ${fornLabel} · ${pLabels[periodoAtivo]}`;
-  document.getElementById('pdf-date-info').innerHTML  = `Gerado em: ${new Date().toLocaleString('pt-BR')}<br>Total: ${lista.length} encomenda${lista.length!==1?'s':''}`;
-  document.getElementById('ps-total').textContent = lista.length;
-  document.getElementById('ps-pag').textContent   = pgs;
-  document.getElementById('ps-pend').textContent  = lista.length-pgs-fin;
-  document.getElementById('ps-fin').textContent   = fin;
-  document.getElementById('ps-val').textContent   = val.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-  document.getElementById('pdf-footer').textContent = `Encomendas · ${new Date().toLocaleString('pt-BR')} · ${lista.length} registro${lista.length!==1?'s':''}`;
-  document.getElementById('lista-encomendas').innerHTML = buildCards(lista);
+  let val = 0, rows = '';
+  lista.forEach(enc => {
+    const { pago, finalizada } = getEnc(enc);
+    const stLabel = finalizada ? '🏁 Finalizada' : pago ? '✅ Pago' : '⏳ Pendente';
+    const stCls = pago ? 'td-status-pago' : 'td-status-pend';
+    enc.itens.forEach((it,i) => {
+      if (!itensSelecionados.has(`${enc.id}::${i}`)) return;
+      val += it.preco;
+      rows += `<tr>
+        <td class="td-cliente">${enc.cliente}</td>
+        <td>${it.peca}</td>
+        <td>${it.fornecedor||'—'}</td>
+        <td>${it.codPeca||'—'}</td>
+        <td>${it.codForn||'—'}</td>
+        <td>${it.preco>0?'R$ '+it.preco.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—'}</td>
+        <td class="${stCls}">${stLabel}</td>
+        <td>${enc.data}</td>
+      </tr>`;
+    });
+  });
+
+  const tabelaHTML = `
+    <table class="pdf-tabela">
+      <thead><tr>
+        <th>Cliente</th><th>Peça</th><th>Fornecedor</th>
+        <th>Cód. Peça</th><th>Cód. Forn.</th>
+        <th>Preço</th><th>Status</th><th>Data</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="text-align:right;font-size:9px;margin-top:4px;color:#555">
+      Total selecionado: <strong>R$ ${val.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong>
+    </div>`;
+
+  document.getElementById('pdf-subtitle').textContent = pLabels[periodoAtivo];
+  document.getElementById('pdf-date-info').innerHTML = `Gerado em: ${new Date().toLocaleString('pt-BR')}`;
+  document.getElementById('ps-total').textContent = itensSelecionados.size;
+  document.getElementById('ps-pag').textContent = lista.filter(e=>getEnc(e).pago).length;
+  document.getElementById('ps-pend').textContent = lista.filter(e=>{ const r=getEnc(e); return !r.pago&&!r.finalizada; }).length;
+  document.getElementById('ps-fin').textContent = lista.filter(e=>getEnc(e).finalizada).length;
+  document.getElementById('ps-val').textContent = val.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  document.getElementById('pdf-footer').textContent = `Encomendas · ${new Date().toLocaleString('pt-BR')}`;
+  document.getElementById('lista-encomendas').innerHTML = tabelaHTML;
+
   fecharModal('modal-pdf');
   setTimeout(()=>window.print(),300);
   setTimeout(()=>renderizar(),1800);
 }
 
 function exportarWpp() {
+  if (!itensSelecionados.size) { toast('Selecione pelo menos um produto.', 'vermelha'); return; }
   const lista = filtrarPDF();
-  if (!lista.length) { toast('Nenhuma encomenda nesse filtro.', 'vermelha'); return; }
   const {ini,fim} = getIntervalo();
   const fmtD = d => d?new Date(d+'T12:00:00').toLocaleDateString('pt-BR'):'';
   const pLabels = {hoje:`Hoje (${fmtD(ini)})`,semana:`Semana (${fmtD(ini)} a ${fmtD(fim)})`,mes:`Mês (${fmtD(ini)} a ${fmtD(fim)})`,custom:`${fmtD(ini)} a ${fmtD(fim)}`};
-  const val = lista.reduce((s,e)=>s+e.itens.reduce((ss,it)=>ss+it.preco,0),0);
-  const STATUS_E = {pendente:'⏳',pago:'✅',finalizada:'🏁'};
+  let val = 0;
+  let txt = `📦 *RELATÓRIO DE ENCOMENDAS*\n📅 ${pLabels[periodoAtivo]}\n\n`;
 
-  let txt = `📦 *RELATÓRIO DE ENCOMENDAS*\n`;
-  txt += `📅 ${pLabels[periodoAtivo]}\n`;
-  if (fornSelecionados.size>0) txt += `🏭 Fornecedor: ${[...fornSelecionados].join(', ')}\n`;
-  txt += `\n`;
-
-  // Agrupar por cliente
   const porCliente = {};
-  lista.forEach(e => {
-    if (!porCliente[e.cliente]) porCliente[e.cliente] = [];
-    porCliente[e.cliente].push(e);
+  lista.forEach(enc => {
+    enc.itens.forEach((it,i) => {
+      if (!itensSelecionados.has(`${enc.id}::${i}`)) return;
+      if (!porCliente[enc.cliente]) porCliente[enc.cliente] = { tel: enc.tel, itens: [] };
+      porCliente[enc.cliente].itens.push({ ...it, enc });
+      val += it.preco;
+    });
   });
 
-  Object.entries(porCliente).forEach(([nome, encs]) => {
+  Object.entries(porCliente).forEach(([nome, dados]) => {
     txt += `*${nome}*`;
-    if (encs[0].tel) txt += ` · ${encs[0].tel}`;
+    if (dados.tel) txt += ` · ${dados.tel}`;
     txt += `\n`;
-    encs.forEach(enc => {
-      const st = enc.status||'pendente';
-      txt += `  ${STATUS_E[st]} ${STATUS_LABEL[st]}\n`;
-      enc.itens.forEach((it,i) => {
-        txt += `  ${i+1}. ${it.peca}`;
-        if (it.fornecedor) txt += ` [${it.fornecedor}]`;
-        if (it.preco>0) txt += ` — R$ ${it.preco.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
-        txt += `\n`;
-      });
+    dados.itens.forEach((it,i) => {
+      const { pago, finalizada } = getEnc(it.enc);
+      const st = finalizada ? '🏁' : pago ? '✅' : '⏳';
+      txt += `  ${i+1}. ${it.peca}`;
+      if (it.fornecedor) txt += ` [${it.fornecedor}]`;
+      if (it.preco>0) txt += ` — R$ ${it.preco.toLocaleString('pt-BR',{minimumFractionDigits:2})}`;
+      txt += ` ${st}\n`;
     });
     txt += `\n`;
   });
@@ -1042,9 +1167,8 @@ function exportarWpp() {
   txt += `💰 *Total: R$ ${val.toLocaleString('pt-BR',{minimumFractionDigits:2})}*\n`;
   txt += `_${new Date().toLocaleString('pt-BR')}_`;
 
-  const url = `https://wa.me/?text=${encodeURIComponent(txt)}`;
   fecharModal('modal-pdf');
-  window.open(url, '_blank');
+  window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`, '_blank');
 }
 
 // ── TOAST ─────────────────────────────────────────────────────────────────────
