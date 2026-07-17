@@ -745,8 +745,9 @@ function toggleFinalizar(id) {
     delete enc.status;
   }
   enc.finalizada = !enc.finalizada;
+  if (enc.finalizada) enc.pago = true; // finalizar = automaticamente pago
   salvar(); renderizar();
-  toast(enc.finalizada ? '🏁 Encomenda finalizada!' : '↩️ Reaberta', enc.finalizada ? 'roxo' : 'laranja');
+  toast(enc.finalizada ? '🏁 Finalizada e marcada como paga!' : '↩️ Reaberta', enc.finalizada ? 'roxo' : 'laranja');
 }
 
 // helper: pega estado real da encomenda (suporta formato antigo)
@@ -878,17 +879,14 @@ function buildCards(lista) {
           <div class="status-banner">
             <div class="status-esquerda">
               <span class="status-hora">${enc.hora||enc.data}</span>
-              ${pago
-                ? `<span class="badge pago inativo">✓ Pago</span>`
-                : `<button class="badge pendente" onclick="togglePago('${enc.id}')">⏳ Pendente — marcar pago</button>`}
             </div>
             <div class="status-actions">
-              ${pago && !finalizada
-                ? `<button class="badge finalizada" onclick="toggleFinalizar('${enc.id}')">🏁 Finalizar</button>`
-                : finalizada
-                ? `<span class="badge finalizada inativo">🏁 Finalizada</span><button class="badge pendente" style="font-size:9px;padding:2px 6px" onclick="toggleFinalizar('${enc.id}')">↩ Reabrir</button>`
-                : ''}
-              ${pago ? `<button class="badge" style="background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.3);font-size:9px" onclick="togglePago('${enc.id}')" title="Remover pagamento">✕ Pago</button>` : ''}
+              <button class="badge ${pago?'pago inativo':'pendente'}" onclick="${pago?`togglePago('${enc.id}')`:`togglePago('${enc.id}')`}" title="${pago?'Clique para remover pagamento':'Marcar como pago'}">
+                ${pago?'✅ Pago':'⏳ Marcar pago'}
+              </button>
+              <button class="badge ${finalizada?'finalizada inativo':'finalizada'}" onclick="toggleFinalizar('${enc.id}')" title="${finalizada?'Clique para reabrir':'Finalizar encomenda'}">
+                ${finalizada?'🏁 Finalizada':'🏁 Finalizar'}
+              </button>
               <button class="btn-icon del" onclick="excluirEncomenda('${enc.id}')" title="Excluir">🗑</button>
             </div>
           </div>
